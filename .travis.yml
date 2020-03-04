@@ -1,0 +1,19 @@
+language: java
+sudo: false
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+notifications:
+  email:
+    recipients:
+      - qrioflat@gmail.com
+    on_success: never # default: change
+    on_failure: always # default: always
+
+services:
+- postgresql
+
+before_install:
+- psql -c 'create database tracker;' -U postgres
+- psql -c 'create database servlet;' -U postgres
