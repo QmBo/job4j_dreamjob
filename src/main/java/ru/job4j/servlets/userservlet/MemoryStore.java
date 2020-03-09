@@ -90,4 +90,16 @@ public class MemoryStore implements Store {
     public User findById(User user) {
         return this.capacity.get(user.getId());
     }
+
+    /**
+     * Shove all roles.
+     * @return roles map
+     */
+    @Override
+    public Map<Integer, Role> allRoles() {
+        Map<Integer, Role> result = new HashMap<>(100);
+        result.put(1, new Role(1, "Administrator"));
+        result.put(2, new Role(2, "User"));
+        return result;
+    }
 }

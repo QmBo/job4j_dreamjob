@@ -23,7 +23,9 @@ public class UserEditServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+        req.getSession().setAttribute("roleList", this.service.getRoles().values());
         try {
+            req.setAttribute("users", service.findAll());
             req.setAttribute("user", service.findById(req));
             req.getRequestDispatcher("/WEB-INF/views/edit.jsp").forward(req, resp);
         } catch (Exception e) {
@@ -35,8 +37,7 @@ public class UserEditServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
         try {
             this.update(req);
-            req.setAttribute("user", service.findById(req));
-            req.getRequestDispatcher("/WEB-INF/views/edit.jsp").forward(req, resp);
+            this.doGet(req, resp);
         } catch (Exception e) {
             LOG.error("Exception", e);
         }
@@ -50,7 +51,7 @@ public class UserEditServlet extends HttpServlet {
         ImageUploader.upload(this, req);
         if (req.getAttribute(PHOTO_ID) != null) {
             String photoId = (String) req.getAttribute(OLD_PHOTO_ID);
-            if (!DEF_PHOTO.equals(photoId)) {
+            if (photoId != null && !DEF_PHOTO.equals(photoId)) {
                 ImageUploader.delete(this, photoId);
             }
         }

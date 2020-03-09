@@ -1,5 +1,6 @@
 package ru.job4j.servlets.userservlet;
 
+import java.util.Map;
 import java.util.Set;
 /**
  * Store
@@ -37,4 +38,9 @@ public interface Store {
      * @return founded User on {@code null}
      */
     User findById(User user);
+    /**
+     * Shove all roles.
+     * @return roles map
+     */
+    Map<Integer, Role> allRoles();
 }

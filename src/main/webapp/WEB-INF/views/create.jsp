@@ -1,22 +1,44 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<c:set var="URL" value="${pageContext.servletContext.contextPath}"/>
 <html>
 <head>
     <title>Create User</title>
 </head>
 <body>
-<form action="${pageContext.servletContext.contextPath}/create" method="post" enctype="multipart/form-data">
+<form action="${URL}/logout">
+    <button>Logout</button>
+</form>
+<form action="${URL}/create" method="post" enctype="multipart/form-data">
     <table>
         <tr>
             <td>User name: </td>
-            <td><input type="text" name="name" placeholder="User name"></td>
+            <td><input required  type="text" name="name" placeholder="User name"></td>
         </tr>
         <tr>
             <td>User login: </td>
-            <td><input type="text" name="login" placeholder="User login"></td>
+            <td><input required type="text" name="login" placeholder="User login"></td>
+        </tr>
+        <tr>
+            <td>User password: </td>
+            <td><input required  type="password" name="password" placeholder="User password"></td>
         </tr>
         <tr>
             <td>User email: </td>
-            <td><input type="email" name="email" placeholder="User email"></td>
+            <td><input required  type="email" name="email" placeholder="User email"></td>
+        </tr>
+        <tr>
+            <td>User role: </td>
+            <td>
+                <select name="role">
+                    <%--@elvariable id="roleList" type="java.util.List"--%>
+                    <c:forEach var="role" items="${roleList}">
+                        <option value="${role.id}">
+                            <c:out value="${role.name}"/>
+                        </option>
+                    </c:forEach>
+                </select>
+            </td>
         </tr>
         <tr>
             <td>User image: </td>

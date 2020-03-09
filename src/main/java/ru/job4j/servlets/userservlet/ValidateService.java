@@ -1,6 +1,10 @@
 package ru.job4j.servlets.userservlet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -10,12 +14,16 @@ import java.util.Set;
  * @since 05.02.2020
  */
 public class ValidateService {
+    private static final Logger LOG = LogManager.getLogger(ValidateService.class);
     private static final String ID = "id";
     private static final String DEL = "del";
     private static final String NAME = "name";
     private static final String EMAIL = "email";
     private static final String LOGIN = "login";
     private static final String PHOTO_ID = "photoId";
+    private static final String PASS = "password";
+    private static final String ROLE = "role";
+    private static final String DEF_ROLE = "User";
     private static final ValidateService SERVICE = new ValidateService();
     private final Store logic = DbStore.getInstance();
 
@@ -45,7 +53,10 @@ public class ValidateService {
                     (String) req.getAttribute(NAME),
                     (String) req.getAttribute(EMAIL),
                     (String) req.getAttribute(LOGIN),
-                    (String) req.getAttribute(PHOTO_ID));
+                    (String) req.getAttribute(PASS),
+                    (String) req.getAttribute(PHOTO_ID),
+                    this.getRoles().get(this.gerRoleId(req))
+            );
         } else {
             user = new User(
                     req.getParameter(NAME),
@@ -53,6 +64,32 @@ public class ValidateService {
                     req.getParameter(LOGIN));
         }
         return this.logic.add(user);
+    }
+
+    /**
+     * Present corrected role id. If uncorrected get the "User" role id.
+     * @param req request
+     * @return role id or USER ROLE id
+     */
+    private int gerRoleId(HttpServletRequest req) {
+        String roleValue = (String) req.getAttribute(ROLE);
+        int roleId = 0;
+        Map<Integer, Role> roleMap = this.logic.allRoles();
+        if (roleValue != null) {
+            try {
+                roleId = Integer.valueOf(roleValue);
+            } catch (NumberFormatException e) {
+                LOG.error("NumberFormatException {roleValue}", e);
+            }
+        }
+        if (!roleMap.keySet().contains(roleId)) {
+            for (Role role : roleMap.values()) {
+                if (DEF_ROLE.equals(role.getName())) {
+                    roleId = role.getId();
+                }
+            }
+        }
+        return roleId;
     }
 
     /**
@@ -112,7 +149,10 @@ public class ValidateService {
                         (String) req.getAttribute(NAME),
                         (String) req.getAttribute(EMAIL),
                         (String) req.getAttribute(LOGIN),
-                        photoId).setId(id);
+                        (String) req.getAttribute(PASS),
+                        photoId,
+                        this.getRoles().get(this.gerRoleId(req))
+                ).setId(id);
             } else {
                 user = new User(
                         req.getParameter(NAME),
@@ -122,5 +162,34 @@ public class ValidateService {
             result = this.logic.update(user);
         }
         return result;
+    }
+
+    /**
+     * Is credentials.
+     * @param req request
+     * @return answer
+     */
+    public boolean isCredentials(final HttpServletRequest req) {
+        boolean result = false;
+        String login = req.getParameter(LOGIN);
+        String password = req.getParameter(PASS);
+        if (login != null && password != null) {
+            Set<User> users = this.findAll();
+            for (User user : users) {
+                if (req.getParameter(LOGIN).equals(user.getLogin())) {
+                    result = req.getParameter(PASS).equals(user.getPassword());
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Shove all roles.
+     * @return roles map
+     */
+    public Map<Integer, Role> getRoles() {
+        return this.logic.allRoles();
     }
 }

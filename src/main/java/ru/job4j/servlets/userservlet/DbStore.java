@@ -45,8 +45,10 @@ public class DbStore implements Store {
     public User add(final User user) {
         List<User> result = this.sqlRequest(
                 format(
-                        "insert into users (name, login, email, create_time, photoId) values ('%s', '%s', '%s', '%d', '%s') RETURNING *",
+                        "insert into users (name, login, email, password, role_id, create_time, photoId) "
+                                + "values ('%s', '%s', '%s', '%s', '%s', '%d', '%s') RETURNING *",
                         user.getName(), user.getLogin(), user.getEmail(),
+                        user.getPassword(), user.getRole().getId(),
                         user.getCreateDate().getTime(), user.getPhotoId()
                 )
         );
@@ -62,9 +64,11 @@ public class DbStore implements Store {
     public User update(final User user) {
         List<User> result = this.sqlRequest(
                 format(
-                        "update users set name = '%s', login = '%s', email = '%s', create_time = '%d', photoId = '%s' where id ='%s' RETURNING *",
+                        "update users set name = '%s', login = '%s', email = '%s', create_time = '%d', "
+                                + "photoId = '%s', password = '%s', role_id = '%s' where id ='%s' RETURNING *",
                         user.getName(), user.getLogin(), user.getEmail(),
-                        user.getCreateDate().getTime(), user.getPhotoId(), user.getId()
+                        user.getCreateDate().getTime(), user.getPhotoId(),
+                        user.getPassword(), user.getRole().getId(), user.getId()
                 )
         );
         return result.isEmpty() ? null : result.get(0);
@@ -113,17 +117,41 @@ public class DbStore implements Store {
      */
     private List<User> sqlRequest(final String sql) {
         List<User> result = new LinkedList<>();
+        Map<Integer, Role> allRoles = allRoles();
         try (Connection st = SOURCE.getConnection();
              ResultSet rs = st.createStatement().executeQuery(sql)) {
             while (rs.next()) {
+                int roleId = rs.getInt("role_id");
                 User user = new User(
                         rs.getString("name"),
                         rs.getString("email"),
                         rs.getString("login"),
+                        rs.getString("password"),
                         rs.getString("photoId"),
-                        new Date(rs.getLong("create_time"))
+                        new Date(rs.getLong("create_time")),
+                        new Role(roleId, allRoles.get(roleId).getName())
                 ).setId(rs.getString("id"));
                 result.add(user);
+            }
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return result;
+    }
+
+    /**
+     * All roles getter.
+     * @return list of roles at request.
+     */
+    public Map<Integer, Role> allRoles() {
+        Map<Integer, Role> result = new HashMap<>(100);
+        try (Connection st = SOURCE.getConnection();
+             ResultSet rs = st.createStatement().executeQuery("select * from roles")) {
+            while (rs.next()) {
+                Role role = new Role(
+                        rs.getInt("id"),
+                        rs.getString("role"));
+                result.put(role.getId(), role);
             }
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);

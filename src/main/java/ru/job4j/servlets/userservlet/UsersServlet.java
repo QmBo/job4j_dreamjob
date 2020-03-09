@@ -49,7 +49,7 @@ public class UsersServlet extends HttpServlet {
         User result = this.service.delete(req);
         if (result != null) {
             String photoId = result.getPhotoId();
-            if (!DEF_PHOTO.equals(photoId)) {
+            if (photoId != null && !DEF_PHOTO.equals(photoId)) {
                 ImageUploader.delete(this, photoId);
             }
         }

@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static java.lang.String.format;
@@ -20,14 +21,25 @@ public class UserCreateServlet extends HttpServlet {
     private static final Logger LOG = LogManager.getLogger(UserCreateServlet.class);
     private static final String DEF_PHOTO = "default.png";
     private static final String PHOTO_ID = "photoId";
+    private static final String ADMIN = "Administrator";
     private final ValidateService service = ValidateService.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-        try {
-            req.getRequestDispatcher("/WEB-INF/views/create.jsp").forward(req, resp);
-        } catch (Exception e) {
-            LOG.error("Exception", e);
+        HttpSession session = req.getSession();
+        if (ADMIN.equals(session.getAttribute("userRole"))) {
+            session.setAttribute("roleList", this.service.getRoles().values());
+            try {
+                req.getRequestDispatcher("/WEB-INF/views/create.jsp").forward(req, resp);
+            } catch (Exception e) {
+                LOG.error("Exception", e);
+            }
+        } else {
+            try {
+                resp.sendRedirect(format("%s/", req.getContextPath()));
+            } catch (IOException e) {
+                LOG.error("IOException", e);
+            }
         }
     }
 
