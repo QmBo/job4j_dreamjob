@@ -1,16 +1,18 @@
-package ru.job4j.servlets.userservlet;
+package ru.job4j.servlet.servlets;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import ru.job4j.servlet.logic.User;
+import ru.job4j.servlet.logic.ValidateService;
 
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.Collections;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 public class UsersServletTest {

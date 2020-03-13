@@ -1,4 +1,4 @@
-package ru.job4j.servlets.userservlet;
+package ru.job4j.servlet.logic;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -13,7 +13,7 @@ import static java.lang.String.format;
 public class DbStore implements Store {
     private static final Logger LOG = LogManager.getLogger(DbStore.class);
     private static final BasicDataSource SOURCE = new BasicDataSource();
-    private static final DbStore INSTANCE = new DbStore();
+    private static final Store INSTANCE = new DbStore();
 
     /**
      * Private constructor.
@@ -32,7 +32,7 @@ public class DbStore implements Store {
      * Get instance.
      * @return instance
      */
-    public static DbStore getInstance() {
+    public static Store getInstance() {
         return INSTANCE;
     }
 

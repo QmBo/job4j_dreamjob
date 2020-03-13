@@ -9,7 +9,7 @@
 <form action="${URL}/logout">
     <button>Logout</button>
 </form>
-<%--@elvariable id="user" type="ru.job4j.servlets.userservlet.User"--%>
+<%--@elvariable id="user" type="ru.job4j.servlet.logic.User"--%>
 <c:if test="${user == null}">
     <h2>Users not found</h2>
 </c:if>

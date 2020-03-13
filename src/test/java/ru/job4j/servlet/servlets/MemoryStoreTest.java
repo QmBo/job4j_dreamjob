@@ -1,9 +1,15 @@
-package ru.job4j.servlets.userservlet;
+package ru.job4j.servlet.servlets;
 
 import org.junit.Test;
+import ru.job4j.servlet.logic.MemoryStore;
+import ru.job4j.servlet.logic.Store;
+import ru.job4j.servlet.logic.User;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 
 public class MemoryStoreTest {
 

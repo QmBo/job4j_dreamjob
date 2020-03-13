@@ -1,4 +1,4 @@
-package ru.job4j.servlets.userservlet;
+package ru.job4j.servlet.logic;
 /**
  * Role
  * @author Victor Egorov (qrioflat@gmail.com).

@@ -1,4 +1,4 @@
-package ru.job4j.servlets.userservlet;
+package ru.job4j.servlet.logic;
 
 import java.util.Date;
 
@@ -40,30 +40,6 @@ public class User implements Comparable<User> {
      */
     public User(final String name, final String email, final String login) {
         this(name, email, login, DEF_PASS, DEF_PHOTO, DATE, DEF_ROLE);
-    }
-
-    /**
-     * Constructor.
-     * @param name User name
-     * @param email User email
-     * @param login User login
-     * @param photoId User photo id
-     */
-    public User(final String name, final String email, final String login, final String photoId) {
-        this(name, email, login, DEF_PASS, photoId, DATE, DEF_ROLE);
-    }
-
-    /**
-     * Constructor.
-     * @param name User name
-     * @param email User email
-     * @param login User login
-     * @param password User password
-     * @param photoId User photo id
-     */
-    public User(final String name, final String email, final String login, final String password,
-                final String photoId) {
-        this(name, email, login, password, photoId, DATE, DEF_ROLE);
     }
 
     /**

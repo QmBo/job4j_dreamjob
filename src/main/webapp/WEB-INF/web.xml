@@ -6,7 +6,7 @@
          version="2.4">
     <servlet>
         <servlet-name>EchoServlet</servlet-name>
-        <servlet-class>ru.job4j.servlets.EchoServlet</servlet-class>
+        <servlet-class>ru.job4j.servlet.EchoServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet-mapping>
@@ -15,7 +15,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>UserServlet</servlet-name>
-        <servlet-class>ru.job4j.servlets.userservlet.UserServlet</servlet-class>
+        <servlet-class>ru.job4j.servlet.servlets.UserServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
@@ -24,7 +24,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>UsersServlet</servlet-name>
-        <servlet-class>ru.job4j.servlets.userservlet.UsersServlet</servlet-class>
+        <servlet-class>ru.job4j.servlet.servlets.UsersServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet-mapping>
@@ -33,7 +33,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>UserCreateServlet</servlet-name>
-        <servlet-class>ru.job4j.servlets.userservlet.UserCreateServlet</servlet-class>
+        <servlet-class>ru.job4j.servlet.servlets.UserCreateServlet</servlet-class>
         <load-on-startup>3</load-on-startup>
     </servlet>
     <servlet-mapping>
@@ -42,7 +42,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>UserUpdateServlet</servlet-name>
-        <servlet-class>ru.job4j.servlets.userservlet.UserEditServlet</servlet-class>
+        <servlet-class>ru.job4j.servlet.servlets.UserEditServlet</servlet-class>
         <load-on-startup>4</load-on-startup>
     </servlet>
     <servlet-mapping>
@@ -51,7 +51,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>DownloadServlet</servlet-name>
-        <servlet-class>ru.job4j.servlets.userservlet.DownloadServlet</servlet-class>
+        <servlet-class>ru.job4j.servlet.servlets.DownloadServlet</servlet-class>
         <load-on-startup>5</load-on-startup>
     </servlet>
     <servlet-mapping>
@@ -60,7 +60,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Login</servlet-name>
-        <servlet-class>ru.job4j.servlets.userservlet.Login</servlet-class>
+        <servlet-class>ru.job4j.servlet.servlets.Login</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
@@ -69,7 +69,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>Logout</servlet-name>
-        <servlet-class>ru.job4j.servlets.userservlet.Logout</servlet-class>
+        <servlet-class>ru.job4j.servlet.servlets.Logout</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
@@ -78,7 +78,7 @@
     </servlet-mapping>
     <filter>
         <filter-name>AuthFilter</filter-name>
-        <filter-class>ru.job4j.servlets.userservlet.AuthFilter</filter-class>
+        <filter-class>ru.job4j.servlet.servlets.AuthFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>

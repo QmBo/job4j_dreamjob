@@ -1,4 +1,4 @@
-package ru.job4j.servlets.userservlet;
+package ru.job4j.servlet.logic;
 
 import java.util.Map;
 import java.util.Set;
