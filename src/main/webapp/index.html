@@ -8,6 +8,19 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
+        function addUser() {
+            if (validate()) {
+                var men = $("#men")[0].checked;
+                $("#tab tr:last").after(
+                    "<tr><td>" + $("#name").val()
+                    + "<td>" + $("#surname").val() + "</td>"
+                    + "<td>" + (men ? "Men" : "Women") + "</td>"
+                    + "<td>" + $("#desc").val() + "</td>"
+                    + "</td></tr>"
+                );
+            }
+        }
+
         function validate() {
             var result = true;
             var message = "";
@@ -74,13 +87,18 @@
                 <input class="btn btn-default" type="submit" value="Submit" onclick="return validate()">
             </div>
         </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input class="btn btn-default" type="button" value="Add User" onclick="addUser()">
+            </div>
+        </div>
     </form>
 </div>
 
 <div class="container-fluid">
     <h2>Users</h2>
     <div class="tab">
-        <table class="table table-hover">
+        <table class="table table-hover" id="tab">
             <thead>
             <tr>
                 <th>Name</th>
