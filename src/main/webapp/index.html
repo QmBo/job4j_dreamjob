@@ -7,6 +7,33 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        function validate() {
+            var result = true;
+            var message = "";
+            var array = [];
+            array[0] = $("#name");
+            array[1] = $("#surname");
+            array[2] = $("#desc");
+            var men = $("#men")[0].checked;
+            var women = $("#women")[0].checked;
+            array.forEach(function (inputVal) {
+                if (inputVal.val() === '') {
+                    message += " ";
+                    message += inputVal[0].name;
+                    result = false;
+                }
+            });
+            if (!men && !women) {
+                message += " sex";
+                result = false;
+            }
+            if (message !== "") {
+                alert("Enter"+ message + "!");
+            }
+            return result;
+        }
+    </script>
 </head>
 <body>
 
@@ -26,25 +53,25 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-2" for="man">User sex:</label>
+            <label class="control-label col-sm-2" for="men">User sex:</label>
             <div class="col-sm-10">
                 <label class="radio-inline">
-                    <input type="radio" name="sex" id="man" value="man"> Man
+                    <input type="radio" name="sex" id="men" value="men"> Men
                 </label>
                 <label class="radio-inline">
-                    <input type="radio" name="sex" id="woman" value="woman"> Woman
+                    <input type="radio" name="sex" id="women" value="women"> Women
                 </label>
             </div>
         </div>
         <div class="form-group">
             <label class="control-label col-sm-2" for="desc">Description:</label>
             <div class="col-sm-10">
-                <textarea class="form-control" rows="3" name="desc" id="desc" placeholder="Enter description"></textarea>
+                <textarea class="form-control" rows="3" name="description" id="desc" placeholder="Enter description"></textarea>
             </div>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <input class="btn btn-default" type="submit" value="Submit">
+                <input class="btn btn-default" type="submit" value="Submit" onclick="return validate()">
             </div>
         </div>
     </form>
