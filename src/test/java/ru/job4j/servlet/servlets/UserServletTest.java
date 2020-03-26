@@ -21,7 +21,6 @@ public class UserServletTest {
     private static final String UPDATE_TO = "User update to:";
     private static final String LS = "<br>";
     private static final String ID = "id";
-    private static final String DELETE = "Deleted";
     private static final String UNF = "Users not Found!";
     private static final String DEL = "del";
     private static final String NAME = "name";
@@ -71,8 +70,10 @@ public class UserServletTest {
         UserServlet service = new UserServlet();
         String id = addUser(service);
         when(request.getParameter(DEL)).thenReturn(id);
-        String exp = Joiner.on(" ").join(DELETE, "User{id='");
-        assertThat(service.delete().apply(request), is(startsWith(exp)));
+        String exp = "Users not Found!";
+        assertThat(service.delete().apply(request), is(exp));
+        when(request.getParameter(ID)).thenReturn(id);
+        assertThat(service.findById().apply(request), is(exp));
     }
 
     @Test

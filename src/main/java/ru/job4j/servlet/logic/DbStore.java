@@ -45,11 +45,12 @@ public class DbStore implements Store {
     public User add(final User user) {
         List<User> result = this.sqlRequest(
                 format(
-                        "insert into users (name, login, email, password, role_id, create_time, photoId) "
-                                + "values ('%s', '%s', '%s', '%s', '%s', '%d', '%s') RETURNING *",
+                        "insert into users (name, login, email, password, role_id, create_time, photoId, city_id) "
+                                + "values ('%s', '%s', '%s', '%s', '%s', '%d', '%s', "
+                                + "(select id from citys where city = '%s')) RETURNING id",
                         user.getName(), user.getLogin(), user.getEmail(),
                         user.getPassword(), user.getRole().getId(),
-                        user.getCreateDate().getTime(), user.getPhotoId()
+                        user.getCreateDate().getTime(), user.getPhotoId(), user.getCity()
                 )
         );
         return result.isEmpty() ? null : result.get(0);
@@ -65,10 +66,11 @@ public class DbStore implements Store {
         List<User> result = this.sqlRequest(
                 format(
                         "update users set name = '%s', login = '%s', email = '%s', create_time = '%d', "
-                                + "photoId = '%s', password = '%s', role_id = '%s' where id ='%s' RETURNING *",
+                                + "photoId = '%s', password = '%s', role_id = '%s', "
+                                + "city_id = (select id from citys where city = '%s') where id ='%s' RETURNING id",
                         user.getName(), user.getLogin(), user.getEmail(),
                         user.getCreateDate().getTime(), user.getPhotoId(),
-                        user.getPassword(), user.getRole().getId(), user.getId()
+                        user.getPassword(), user.getRole().getId(), user.getCity(), user.getId()
                 )
         );
         return result.isEmpty() ? null : result.get(0);
@@ -83,7 +85,7 @@ public class DbStore implements Store {
     public User delete(final User user) {
         List<User> result = this.sqlRequest(
                 format(
-                        "delete from users where id ='%s' RETURNING *",
+                        "delete from users where id ='%s' RETURNING id",
                         user.getId()
                 )
         );
@@ -96,7 +98,7 @@ public class DbStore implements Store {
      */
     @Override
     public Set<User> findAll() {
-        return new TreeSet<>(this.sqlRequest("select * from users"));
+        return new TreeSet<>(this.sqlRequest("select id from users"));
     }
 
     /**
@@ -117,24 +119,64 @@ public class DbStore implements Store {
      */
     private List<User> sqlRequest(final String sql) {
         List<User> result = new LinkedList<>();
-        Map<Integer, Role> allRoles = allRoles();
-        try (Connection st = SOURCE.getConnection();
-             ResultSet rs = st.createStatement().executeQuery(sql)) {
+        try (Connection conn = SOURCE.getConnection();
+             ResultSet rs = conn.createStatement().executeQuery(sql)) {
+            List<Integer> ids = new LinkedList<>();
             while (rs.next()) {
-                int roleId = rs.getInt("role_id");
-                User user = new User(
+                ids.add(rs.getInt("id"));
+            }
+            result = this.usersGetter(ids, conn);
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return result;
+    }
+
+    /**
+     * SQL Requester helper. Return users bu id.
+     * @param ids users to return
+     * @param conn connection
+     * @return users bu id
+     */
+    private List<User> usersGetter(final List<Integer> ids, final Connection conn) {
+        List<User> result = new LinkedList<>();
+        //noinspection SqlResolve
+        try (PreparedStatement ps = conn.prepareStatement(
+                "select u.id, u.name, u.login, u.email, u.create_time, u.photoid, u.password, "
+                        + "r.role, c.city, co.country, u.role_id, u.city_id, c.country_id from users as u "
+                        + "inner join citys as c on(u.city_id = c.id) inner join roles as r on(u.role_id = r.id) "
+                        + "inner join countrys as co on (co.id = c.country_id) where u.id = ?")) {
+            for (int i : ids) {
+                ps.setInt(1, i);
+                result.add(this.usersCrater(ps.executeQuery()));
+            }
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return result;
+    }
+
+    private User usersCrater(ResultSet rs) {
+        User result = null;
+        try {
+            while (rs.next()) {
+                result = new User(
                         rs.getString("name"),
                         rs.getString("email"),
                         rs.getString("login"),
                         rs.getString("password"),
                         rs.getString("photoId"),
                         new Date(rs.getLong("create_time")),
-                        new Role(roleId, allRoles.get(roleId).getName())
+                        new Role(
+                                rs.getInt("role_id"),
+                                rs.getString("role")
+                        ),
+                        rs.getString("country"),
+                        rs.getString("city")
                 ).setId(rs.getString("id"));
-                result.add(user);
             }
         } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
+            e.printStackTrace();
         }
         return result;
     }
@@ -152,6 +194,35 @@ public class DbStore implements Store {
                         rs.getInt("id"),
                         rs.getString("role"));
                 result.put(role.getId(), role);
+            }
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        }
+        return result;
+    }
+
+
+    /**
+     * All address getter.
+     * @return list of address at request.
+     * @noinspection SqlResolve
+     */
+    @Override
+    public List<UsersAddress> allAddresses() {
+        List<UsersAddress> result = new LinkedList<>();
+        try (Connection st = SOURCE.getConnection();
+             ResultSet rs = st.createStatement().executeQuery(
+                     "select co.country, c.city, c.id, c.country_id from countrys as co "
+                             + "inner join citys as c on (c.country_id = co.id) order by c.id"
+             )) {
+            while (rs.next()) {
+                UsersAddress address = new UsersAddress(
+                        rs.getInt("id"),
+                        rs.getString("city"),
+                        rs.getInt("country_id"),
+                        rs.getString("country")
+                );
+                result.add(address);
             }
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);

@@ -37,7 +37,7 @@ public class MemoryStore implements Store {
         String id = String.valueOf(Integer.valueOf(lastId) + 1);
         this.capacity.putIfAbsent(id, user);
         return user.setId(id);
-}
+    }
 
     /**
      * Last id find helper.
@@ -100,6 +100,20 @@ public class MemoryStore implements Store {
         Map<Integer, Role> result = new HashMap<>(100);
         result.put(1, new Role(1, "Administrator"));
         result.put(2, new Role(2, "User"));
+        return result;
+    }
+
+    /**
+     * All Addresses getter.
+     * @return addresses list
+     */
+    @Override
+    public List<UsersAddress> allAddresses() {
+        List<UsersAddress> result = new LinkedList<>();
+        result.add(new UsersAddress(1, "Moscow", 1, "Russia"));
+        result.add(new UsersAddress(2, "Perm", 1, "Russia"));
+        result.add(new UsersAddress(3, "Berlin", 2, "Germany"));
+        result.add(new UsersAddress(4, "Munich", 2, "Germany"));
         return result;
     }
 }

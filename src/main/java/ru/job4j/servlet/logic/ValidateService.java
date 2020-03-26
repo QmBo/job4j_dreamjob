@@ -4,8 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * ValidateService
@@ -25,6 +24,13 @@ public class ValidateService {
     private static final String ROLE = "role";
     private static final String DEF_ROLE = "User";
     private static final ValidateService SERVICE = new ValidateService();
+    private static final String OUT_ID = "-1";
+    private static final String COUNTRY = "country";
+    private static final String CITY = "city";
+    public static final String COUNTRY_PARAM = "name";
+    public static final String ALL_COUNTRYS = "allCountrys";
+    public static final String DEF_CITY = "Moscow";
+    public static final String DEF_COUNTRY = "Russia";
     private final Store logic = DbStore.getInstance();
 
     /**
@@ -49,13 +55,16 @@ public class ValidateService {
     public User add(final HttpServletRequest req) {
         User user;
         if (req.getParameterMap().isEmpty()) {
+            Map<String, String> address = this.getCorrectAddress(req);
             user = new User(
                     (String) req.getAttribute(NAME),
                     (String) req.getAttribute(EMAIL),
                     (String) req.getAttribute(LOGIN),
                     (String) req.getAttribute(PASS),
                     (String) req.getAttribute(PHOTO_ID),
-                    this.getRoles().get(this.gerRoleId(req))
+                    this.getRoles().get(this.gerRoleId(req)),
+                    address.get(COUNTRY),
+                    address.get(CITY)
             );
         } else {
             user = new User(
@@ -64,6 +73,27 @@ public class ValidateService {
                     req.getParameter(LOGIN));
         }
         return this.logic.add(user);
+    }
+
+    /**
+     * Check input addresses and return correct or default.
+     * @param req request
+     * @return country and city names map
+     */
+    private Map<String, String> getCorrectAddress(final HttpServletRequest req) {
+        Map<String, String> result = new HashMap<>(Map.of(COUNTRY, DEF_COUNTRY, CITY, DEF_CITY));
+        String cityId = (String) req.getAttribute(CITY);
+        if (cityId != null) {
+            List<UsersAddress> addresses = this.logic.allAddresses();
+            for (UsersAddress address : addresses) {
+                if (address.getId() == Integer.valueOf(cityId)) {
+                    result.put(COUNTRY, address.getCountry());
+                    result.put(CITY, address.getCity());
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     /**
@@ -145,13 +175,16 @@ public class ValidateService {
                 if (photoId == null) {
                     photoId = oldUser.getPhotoId();
                 }
+                Map<String, String> address = this.getCorrectAddress(req);
                 user = new User(
                         (String) req.getAttribute(NAME),
                         (String) req.getAttribute(EMAIL),
                         (String) req.getAttribute(LOGIN),
                         (String) req.getAttribute(PASS),
                         photoId,
-                        this.getRoles().get(this.gerRoleId(req))
+                        this.getRoles().get(this.gerRoleId(req)),
+                        address.get(COUNTRY),
+                        address.get(CITY)
                 ).setId(id);
             } else {
                 user = new User(
@@ -191,5 +224,52 @@ public class ValidateService {
      */
     public Map<Integer, Role> getRoles() {
         return this.logic.allRoles();
+    }
+
+    /**
+     * Check login to available. If update user, put user id.
+     * @param req request
+     * @return available
+     */
+    public boolean available(final HttpServletRequest req) {
+        boolean result = true;
+        String id = req.getParameter(ID);
+        String login = req.getParameter(LOGIN);
+        if (id == null) {
+            id = OUT_ID;
+        }
+        for (User user : this.logic.findAll()) {
+            if (login.equals(user.getLogin()) && !id.equals(user.getId())) {
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Get all addresses.
+     * @param req request
+     * @return available
+     */
+    public LinkedHashMap<Integer, String> getAllAddresses(final HttpServletRequest req) {
+        LinkedHashMap<Integer, String> result = new LinkedHashMap<>();
+        String param = req.getParameter(COUNTRY_PARAM);
+        if (param != null) {
+            List<UsersAddress> addresses = this.logic.allAddresses();
+            if (ALL_COUNTRYS.equals(param)) {
+                for (UsersAddress address : addresses) {
+                    result.putIfAbsent(address.getCountryId(), address.getCountry());
+                }
+            } else {
+                for (UsersAddress address : addresses) {
+                    String id = String.valueOf(address.getCountryId());
+                    if (param.equals(id)) {
+                        result.putIfAbsent(address.getId(), address.getCity());
+                    }
+                }
+            }
+        }
+        return result;
     }
 }

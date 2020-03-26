@@ -21,28 +21,21 @@ public class AuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
-        if (!request.getRequestURI().contains("/greet")) {
-            if (!request.getRequestURI().contains("/login")) {
-                HttpSession session = request.getSession();
-                if (session.getAttribute("login") == null) {
-                    ((HttpServletResponse) resp).sendRedirect(format("%s/login", request.getContextPath()));
-                } else {
-                    String login = (String) session.getAttribute("login");
-                    for (User user : this.service.findAll()) {
-                        if (login.equals(user.getLogin())) {
-                            session.setAttribute(
-                                    "userRole",
-                                    this.service.getRoles().get(
-                                            user.getRole().getId()
-                                    ).getName()
-                            );
-                        }
-                    }
-                    chain.doFilter(req, resp);
-                }
+        if (!(request.getRequestURI().contains("/greet") || request.getRequestURI().contains("/login"))) {
+            HttpSession session = request.getSession();
+            if (session.getAttribute("login") == null) {
+                ((HttpServletResponse) resp).sendRedirect(format("%s/login", request.getContextPath()));
             } else {
-                if (request.getSession().getAttribute("login") != null) {
-                    ((HttpServletResponse) resp).sendRedirect(format("%s/", request.getContextPath()));
+                String login = (String) session.getAttribute("login");
+                for (User user : this.service.findAll()) {
+                    if (login.equals(user.getLogin())) {
+                        session.setAttribute(
+                                "userRole",
+                                this.service.getRoles().get(
+                                        user.getRole().getId()
+                                ).getName()
+                        );
+                    }
                 }
                 chain.doFilter(req, resp);
             }

@@ -1,5 +1,6 @@
 package ru.job4j.servlet.logic;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 /**
@@ -43,4 +44,9 @@ public interface Store {
      * @return roles map
      */
     Map<Integer, Role> allRoles();
+    /**
+     * Shove all addresses.
+     * @return roles list
+     */
+    List<UsersAddress> allAddresses();
 }

@@ -61,7 +61,7 @@
     <servlet>
         <servlet-name>Login</servlet-name>
         <servlet-class>ru.job4j.servlet.servlets.Login</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <load-on-startup>10</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>Login</servlet-name>
@@ -70,7 +70,7 @@
     <servlet>
         <servlet-name>Logout</servlet-name>
         <servlet-class>ru.job4j.servlet.servlets.Logout</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <load-on-startup>10</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>Logout</servlet-name>
@@ -85,6 +85,26 @@
     <servlet-mapping>
         <servlet-name>GreetingServlet</servlet-name>
         <url-pattern>/greet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AddressServlet</servlet-name>
+        <servlet-class>ru.job4j.servlet.servlets.AddressServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddressServlet</servlet-name>
+        <url-pattern>/address</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LoginAvailableServlet</servlet-name>
+        <servlet-class>ru.job4j.servlet.servlets.LoginAvailableServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginAvailableServlet</servlet-name>
+        <url-pattern>/available</url-pattern>
     </servlet-mapping>
 
     <filter>

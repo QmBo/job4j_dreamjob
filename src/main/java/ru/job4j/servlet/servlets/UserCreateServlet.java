@@ -2,7 +2,6 @@ package ru.job4j.servlet.servlets;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.job4j.servlet.logic.User;
 import ru.job4j.servlet.logic.ValidateService;
 
 import javax.servlet.http.HttpServlet;

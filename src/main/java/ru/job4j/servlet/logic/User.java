@@ -11,10 +11,12 @@ import java.util.Date;
 public class User implements Comparable<User> {
     private static final String DEF_NAME = "Default";
     private static final String DEF_EMAIL = "Default";
+    private static final String DEF_CITY = "Moscow";
+    private static final String DEF_COUNTRY = "Russia";
     private static final String DEF_LOGIN = "Default";
     private static final String DEF_PHOTO = "default.png";
     private static final String DEF_PASS = "";
-    private static final Role DEF_ROLE = new Role(1, "Nub");
+    private static final Role DEF_ROLE = new Role(2, "User");
     private static final Date DATE = new Date(System.currentTimeMillis());
     private final Role role;
     private String id;
@@ -24,12 +26,14 @@ public class User implements Comparable<User> {
     private final Date createDate;
     private String photoId;
     private String password;
+    private String country;
+    private String city;
 
     /**
      * Constructor.
      */
     public User() {
-        this(DEF_NAME, DEF_EMAIL, DEF_LOGIN, DEF_PASS, DEF_PHOTO, DATE, DEF_ROLE);
+        this(DEF_NAME, DEF_EMAIL, DEF_LOGIN, DEF_PASS, DEF_PHOTO, DATE, DEF_ROLE, DEF_COUNTRY, DEF_CITY);
     }
 
     /**
@@ -39,7 +43,7 @@ public class User implements Comparable<User> {
      * @param login User login
      */
     public User(final String name, final String email, final String login) {
-        this(name, email, login, DEF_PASS, DEF_PHOTO, DATE, DEF_ROLE);
+        this(name, email, login, DEF_PASS, DEF_PHOTO, DATE, DEF_ROLE, DEF_COUNTRY, DEF_CITY);
     }
 
     /**
@@ -52,8 +56,8 @@ public class User implements Comparable<User> {
      * @param role User role
      */
     public User(final String name, final String email, final String login, final String password,
-                final String photoId, final Role role) {
-        this(name, email, login, password, photoId, DATE, role);
+                final String photoId, final Role role, final String country, final String city) {
+        this(name, email, login, password, photoId, DATE, role, country, city);
     }
     /**
      * Constructor.
@@ -66,7 +70,7 @@ public class User implements Comparable<User> {
      * @param role User role
      */
     public User(final String name, final String email, final String login, final String password,
-                final String photoId, final Date createDate, final Role role) {
+                final String photoId, final Date createDate, final Role role, final String country, final String city) {
         this.name = name;
         this.email = email;
         this.login = login;
@@ -74,6 +78,8 @@ public class User implements Comparable<User> {
         this.photoId = photoId;
         this.createDate = createDate;
         this.role = role;
+        this.city = city;
+        this.country = country;
     }
 
     /**
@@ -104,6 +110,8 @@ public class User implements Comparable<User> {
                 + ", createDate=" + createDate
                 + ", photoId='" + photoId + '\''
                 + ", role=" + role
+                + ", country=" + country
+                + ", city=" + city
                 + '}';
     }
 
@@ -137,6 +145,9 @@ public class User implements Comparable<User> {
         if (photoId != null ? !photoId.equals(user.photoId) : user.photoId != null) {
             return false;
         }
+        if (city != null ? !city.equals(user.city) : user.city != null) {
+            return false;
+        }
         return password != null ? password.equals(user.password) : user.password == null;
     }
 
@@ -150,6 +161,8 @@ public class User implements Comparable<User> {
         result = 31 * result + (createDate != null ? createDate.hashCode() : 0);
         result = 31 * result + (photoId != null ? photoId.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (city != null ? city.hashCode() : 0);
+        result = 31 * result + (country != null ? country.hashCode() : 0);
         return result;
     }
 
@@ -224,5 +237,21 @@ public class User implements Comparable<User> {
      */
     public Role getRole() {
         return role;
+    }
+
+    /**
+     * Country getter.
+     * @return country
+     */
+    public String getCountry() {
+        return this.country;
+    }
+
+    /**
+     * City getter.
+     * @return city
+     */
+    public String getCity() {
+        return this.city;
     }
 }
