@@ -16,3 +16,6 @@ services:
 
 before_install:
 - psql -c 'create database servlet;' -U postgres
+
+jdk:
+  - oraclejdk14

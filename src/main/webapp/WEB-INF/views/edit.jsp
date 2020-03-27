@@ -7,8 +7,12 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
           integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
           crossorigin="anonymous">
+<%--suppress JSUnresolvedLibraryURL --%>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
+        var host = '192.168.1.101';
+        var port = '8080';
+
         function validate() {
             var result = true;
             var message = "";
@@ -34,7 +38,7 @@
             var country = $('#country').val();
             if (country !== null) {
                 $.ajax({
-                    url: 'http://localhost:8080/address',
+                    url: 'http://' + host + ':' + port + '/servlet/address',
                     type: 'GET',
                     data: 'name=' + country,
                     dataType: 'text'
@@ -61,7 +65,7 @@
 
         $().ready(function country() {
             $.ajax({
-                url: 'http://localhost:8080/address',
+                url: 'http://' + host + ':' + port + '/servlet/address',
                 type: 'GET',
                 data: 'name=allCountrys',
                 dataType: 'text'
@@ -90,7 +94,7 @@
 
         function available(login) {
             $.ajax({
-                url: 'http://localhost:8080/available',
+                url: 'http://' + host + ':' + port + '/servlet/available',
                 type: 'GET',
                 data: 'login=' + login + '&id=' + $('#id').val(),
                 dataType: 'text'
